@@ -25,8 +25,8 @@ env:
   RUN_TYPE: garmin_to_strava_cn
   ATHLETE: NaturezzZ
   TITLE: NaturezzZ Running
-  MIN_GRID_DISTANCE: 1 # change min distance here
-  TITLE_GRID: Over 1km Runs # also here
+  MIN_GRID_DISTANCE: 5 # change min distance here
+  TITLE_GRID: Over 5km Runs # also here
   GITHUB_NAME: naturezzz
   GITHUB_EMAIL: naturezzz@outlook.com
 
