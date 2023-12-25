@@ -1,6 +1,6 @@
 import { ComponentType, lazy, Suspense } from 'react'
 import styles from './style.module.scss';
-import { totalStat } from '../../../assets'
+import { totalStat } from '@assets/index'
 
 // Lazy load both github.svg and grid.svg
 const GithubSvg = lazy(() =>
