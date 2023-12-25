@@ -95,7 +95,8 @@ R.I.P. 希望大家都能健康顺利的跑过终点，逝者安息。
 | [deepinwine](https://github.com/deepinwine)       | <https://deepin.autove.dev/>                   | Garmin-cn   |
 | [Jeffggmm](https://github.com/Jeffggmm)           | <https://jeffggmm.github.io/workouts_page/>    | Garmin      |
 | [s1smart](https://github.com/s1smart)             | <https://s1smart.github.io/running_page/>      | Strava      |
-
+| [Ryan](https://github.com/85Ryan)                 | <https://85ryan.github.io/gooorun/>            | Strava      |
+| [PPZ](https://github.com/8824PPZ)                 | <https://run.dudubbbbbbbbb.top/>            | Strava      |
 </details>
 
 ## 它是怎么工作的
@@ -580,10 +581,15 @@ python3(python) run_page/garmin_sync.py xxxxxxxxxx --is-cn --only-run
 
 获取 Nike 的 refresh_token
 
-1. 登录 [Nike](https://www.nike.com) 官网
-2. In Developer -> Application-> Storage -> https:unite.nike.com 中找到 refresh_token
+**全部需要在大陆以外的全局 ip 下进行**
 
-![image](https://user-images.githubusercontent.com/15976103/94448123-23812b00-01dd-11eb-8143-4b0839c31d90.png) 3. 在项目根目录下执行：
+![example img](https://user-images.githubusercontent.com/67903793/282300381-4e7437d0-65a9-4eed-93d1-2b70e360215f.png)
+
+1. 在这里登陆[website](https://unite.nike.com/s3/unite/mobile.html?androidSDKVersion=3.1.0&corsoverride=https%3A%2F%2Funite.nike.com&uxid=com.nike.sport.running.droid.3.8&backendEnvironment=identity&view=login&clientId=VhAeafEGJ6G8e9DxRUz8iE50CZ9MiJMG), 打开 F12 在浏览器抓 login -> XHR -> get the `refresh_token` from login api
+
+2. 复制 `refresh_token` 之后可以添加在GitHub Secrets 中，也可以直接在命令行中使用
+
+> Chrome 浏览器：按下 F12 打开浏览器开发者工具，点击 Application 选项卡，来到左侧的 Storage 面板，点击展开 Local storage，点击下方的 https://unite.nike.com。接着点击右侧的 com.nike.commerce.nikedotcom.web.credential Key，下方会分行显示我们选中的对象，可以看到 refresh_token ，复制 refresh_token 右侧的值。Safari 浏览器：在 Safari 打开 Nike 的网页后，右击页面，选择「检查元素」，打开浏览器开发者工具。点击「来源」选项卡，在左侧找到 XHR 文件夹，点击展开，在下方找到 login 文件并单击，在右侧同样可以看到 refresh_token ，复制 refresh_token 右侧的值。
 
 ```bash
 python3(python) run_page/nike_sync.py ${nike refresh_token}
@@ -905,6 +911,13 @@ python3(python) run_page/gen_svg.py --from-db --type circular --use-localtime
 - 某些浏览器 (比如 Chrome) 可能缓存网页不刷新，您需要使用 Ctrl+F5 (Windows) 或 Shift+Cmd+r (Mac) 强制清除缓存并重新加载页面
 
 4. 为 GitHub Actions 添加代码提交权限，访问仓库的 `Settings > Actions > General`页面，找到 `Workflow permissions` 的设置项，将选项配置为 `Read and write permissions`，支持 CI 将运动数据更新后提交到仓库中。
+
+
+5. 如果想把你的 running_page 部署在 xxx.github.io 而不是 xxx.github.io/run_page，需要做三点
+
+-  修改你的 fork 的 running_page 仓库改名为 xxx.github.io, xxx 是你 github 的 username
+-  修改 gh-pages.yml 中的 Build 模块，删除 `${{ github.event.repository.name }}` 改为`run: PATH_PREFIX=/ pnpm build` 即可
+-  src/static/site-metadata.ts 中 `siteUrl: ''` 即可
 
 </details>
 
