@@ -37,7 +37,7 @@ if __name__ == "__main__":
         action="store_true",
         help="if is only for running",
     )
-    
+
     options = parser.parse_args()
     secret_string_cn = options.cn_secret_string
     secret_string_global = options.global_secret_string
@@ -67,11 +67,17 @@ if __name__ == "__main__":
     )
     loop.run_until_complete(future)
     new_ids = future.result()
-    to_upload_files = [os.path.join(folder, f"{i}.fit") for i in new_ids if os.path.exists(os.path.join(folder, f"{i}.fit"))]
+    to_upload_files = [
+        os.path.join(folder, f"{i}.fit")
+        for i in new_ids
+        if os.path.exists(os.path.join(folder, f"{i}.fit"))
+    ]
     print("Files to sync:" + to_upload_files)
-    garmin_global_client = Garmin(secret_string_global, 
-                                  config("sync", "garmin", "authentication_domain"),
-                                  is_only_running)
+    garmin_global_client = Garmin(
+        secret_string_global,
+        config("sync", "garmin", "authentication_domain"),
+        is_only_running,
+    )
     loop = asyncio.get_event_loop()
     future = asyncio.ensure_future(
         garmin_global_client.upload_activities_files(to_upload_files, False)
