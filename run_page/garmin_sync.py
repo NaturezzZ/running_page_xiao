@@ -152,6 +152,37 @@ class Garmin:
                 print("garmin upload failed: ", e)
         await self.req.aclose()
 
+    async def upload_activities_files(self, files, use_fake_garmin_device=False):
+        print(
+            "start upload activities to garmin!, use_fake_garmin_device:",
+            use_fake_garmin_device,
+        )
+        for file in files:
+            print(file)
+            f = open(file, "rb")
+            # wrap fake garmin device to origin fit file, current not support gpx file
+            if use_fake_garmin_device:
+                file_body = wrap_device_info(f)
+            else:
+                file_body = BytesIO(f.read())
+            files = {"file": (file, file_body)}
+
+            try:
+                res = await self.req.post(
+                    self.upload_url, files=files, headers=self.headers
+                )
+                f.close()
+            except Exception as e:
+                print(str(e))
+                # just pass for now
+                continue
+            try:
+                resp = res.json()["detailedImportResult"]
+                print("garmin upload success: ", resp)
+            except Exception as e:
+                print("garmin upload failed: ", e)
+        await self.req.aclose()
+
 
 class GarminConnectHttpError(Exception):
     def __init__(self, status):
@@ -201,10 +232,13 @@ async def download_garmin_data(client, activity_id, file_type="gpx"):
             zip_file = zipfile.ZipFile(file_path, "r")
             for file_info in zip_file.infolist():
                 zip_file.extract(file_info, folder)
-                os.rename(
-                    os.path.join(folder, f"{activity_id}_ACTIVITY.fit"),
-                    os.path.join(folder, f"{activity_id}.fit"),
-                )
+                if file_info.filename.endswith(".fit"):
+                    os.rename(
+                        os.path.join(folder, f"{activity_id}_ACTIVITY.fit"),
+                        os.path.join(folder, f"{activity_id}.fit"),
+                    )
+                else:
+                    os.remove(os.path.join(folder, file_info.filename))
             os.remove(file_path)
     except Exception as e:
         print(f"Failed to download activity {activity_id}: {str(e)}")
