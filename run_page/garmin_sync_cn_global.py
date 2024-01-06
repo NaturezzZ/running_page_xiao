@@ -17,11 +17,12 @@ import aiofiles
 import cloudscraper
 import garth
 import httpx
-from config import FOLDER_DICT, JSON_FILE, SQL_FILE, config
+from config import FIT_FOLDER, GPX_FOLDER, JSON_FILE, SQL_FILE, config
 from garmin_device_adaptor import wrap_device_info
 from garmin_sync import Garmin, get_downloaded_ids
-from garmin_sync import download_new_activities
-
+from garmin_sync import download_new_activities, gather_with_concurrency
+from synced_data_file_logger import load_synced_activity_list, save_synced_activity_list
+from utils import make_activities_file
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -41,25 +42,30 @@ if __name__ == "__main__":
     options = parser.parse_args()
     secret_string_cn = options.cn_secret_string
     secret_string_global = options.global_secret_string
-    # auth_domain = (
-    #     "CN" if options.is_cn else config("sync", "garmin", "authentication_domain")
-    # )
     auth_domain = "CN"
     is_only_running = options.only_run
     if secret_string_cn is None or secret_string_global is None:
         print("Missing argument nor valid configuration file")
         sys.exit(1)
-    folder = FOLDER_DICT.get("fit")
+
+    # Step 1:
+    # Sync all activities from Garmin CN to Garmin Global in FIT format
+    # If the activity is manually imported with a GPX, the GPX file will be synced
+
+    # load synced activity list
+    synced_activity = load_synced_activity_list()
+
+    folder = FIT_FOLDER
     # make gpx or tcx dir
     if not os.path.exists(folder):
         os.mkdir(folder)
-    downloaded_ids = get_downloaded_ids(folder)
+
     loop = asyncio.get_event_loop()
     future = asyncio.ensure_future(
         download_new_activities(
             secret_string_cn,
             auth_domain,
-            downloaded_ids,
+            synced_activity,
             is_only_running,
             folder,
             "fit",
@@ -67,11 +73,16 @@ if __name__ == "__main__":
     )
     loop.run_until_complete(future)
     new_ids = future.result()
-    to_upload_files = [
-        os.path.join(folder, f"{i}.fit")
-        for i in new_ids
-        if os.path.exists(os.path.join(folder, f"{i}.fit"))
-    ]
+
+    to_upload_files = []
+    for i in new_ids:
+        if os.path.exists(os.path.join(FIT_FOLDER, f"{i}.fit")):
+            # upload fit files
+            to_upload_files.append(os.path.join(FIT_FOLDER, f"{i}.fit"))
+        elif os.path.exists(os.path.join(GPX_FOLDER, f"{i}.gpx")):
+            # upload gpx files which are manually uploaded to garmin connect
+            to_upload_files.append(os.path.join(GPX_FOLDER, f"{i}.gpx"))
+
     print("Files to sync:" + " ".join(to_upload_files))
     garmin_global_client = Garmin(
         secret_string_global,
@@ -80,6 +91,15 @@ if __name__ == "__main__":
     )
     loop = asyncio.get_event_loop()
     future = asyncio.ensure_future(
-        garmin_global_client.upload_activities_files(to_upload_files, False)
+        garmin_global_client.upload_activities_files(to_upload_files)
     )
     loop.run_until_complete(future)
+
+    # Save synced activity list for speeding up
+    synced_activity.extend(new_ids)
+    save_synced_activity_list(synced_activity)
+
+    # Step 2:
+    # Generate track from fit/gpx file
+    make_activities_file(SQL_FILE, GPX_FOLDER, JSON_FILE, file_suffix="gpx")
+    make_activities_file(SQL_FILE, FIT_FOLDER, JSON_FILE, file_suffix="fit")
