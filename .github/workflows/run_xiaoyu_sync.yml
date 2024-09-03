@@ -3,7 +3,7 @@ name: Run Data Sync Xiaoyu
 on:
   workflow_dispatch: 
   schedule:
-    - cron: '0 */3 * * *'
+    - cron: '*/30 * * * *'
   push:
     branches:
       - master
