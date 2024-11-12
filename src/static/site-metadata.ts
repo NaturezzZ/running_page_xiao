@@ -11,13 +11,13 @@ interface ISiteMetadataResult {
 
 const data: ISiteMetadataResult = {
   siteTitle: 'Running Page',
-  siteUrl: 'https://run.zhengnq.com',
+  siteUrl: 'https://xrun.zhengnq.com',
   logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTtc69JxHNcmN1ETpMUX4dozAgAN6iPjWalQ&usqp=CAU',
   description: 'Personal site and blog',
   navLinks: [
     {
       name: 'About',
-      url: 'https://www.zhengnq.com',
+      url: 'https://github.com/naturezzz/running_page',
     },
   ],
 };
