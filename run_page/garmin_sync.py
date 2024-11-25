@@ -298,7 +298,7 @@ async def download_new_activities(
     for id in to_generate_garmin_ids:
         try:
             activity_summary = await client.get_activity_summary(id)
-            activity_title = activity_summary.get("activityName", "none")
+            activity_title = activity_summary.get("activityName", "")
             to_generate_garmin_id2title[id] = activity_title
         except Exception as e:
             print(f"Failed to get activity summary {id}: {str(e)}")
@@ -366,6 +366,14 @@ if __name__ == "__main__":
     if not os.path.exists(folder):
         os.mkdir(folder)
     downloaded_ids = get_downloaded_ids(folder)
+
+    if file_type == "fit":
+        gpx_folder = FOLDER_DICT["gpx"]
+        if not os.path.exists(gpx_folder):
+            os.mkdir(gpx_folder)
+        downloaded_gpx_ids = get_downloaded_ids(gpx_folder)
+        # merge downloaded_ids:list
+        downloaded_ids = list(set(downloaded_ids + downloaded_gpx_ids))
 
     loop = asyncio.get_event_loop()
     future = asyncio.ensure_future(
