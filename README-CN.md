@@ -106,6 +106,8 @@ R.I.P. 希望大家都能健康顺利的跑过终点，逝者安息。
 | [laqieer](https://github.com/laqieer)             | <https://laqieer.github.io/running_page/>      | Strava      |
 | [Guoxin](https://github.com/guoxinl)              | <https://running.guoxin.space/>                | Strava      |
 | [Darren](https://github.com/Flavored4179)         | <https://run.wdoc.top/>                        | tcx         |
+| [Evan](https://github.com/LinghaoChan)            | <https://github.com/LinghaoChan/running>       | Keep        |
+| [Shuqi](https://github.com/zhufengme)            | <https://runner-shuqi.devlink.cn/>       | Garmin |
 </details>
 
 ## 它是怎么工作的
@@ -166,7 +168,7 @@ R.I.P. 希望大家都能健康顺利的跑过终点，逝者安息。
 git clone https://github.com/yihong0618/running_page.git --depth=1
 ```
 
-## 安装及测试 (node >= 16 python >= 3.8)
+## 安装及测试 (node >= 20 python >= 3.11)
 
 ```bash
 pip3 install -r requirements.txt
