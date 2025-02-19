@@ -103,7 +103,11 @@ English | [简体中文](https://github.com/yihong0618/running_page/blob/master/
 | [laqieer](https://github.com/laqieer)             | <https://laqieer.github.io/running_page/>      | Strava      |
 | [Guoxin](https://github.com/guoxinl)              | <https://running.guoxin.space/>                | Strava      |
 | [laihj](https://github.com/laihj)                 | <https://run.laihjx.com/>                      | 苹果健身     |
-| [Ginta](https://github.com/mar-heaven)            | <https://running.ginta.top/>                   | Keep         |
+| [Ginta](https://github.com/mar-heaven)            | <https://running.ginta.top/>                   | Keep        |
+| [Samuel](https://github.com/SamuelDixxon)         | <https://samueldixxon.github.io/running_page/> | Keep        |
+| [Evan](https://github.com/LinghaoChan)            | <https://github.com/LinghaoChan/running>       | Keep        |
+| [Shuqi](https://github.com/zhufengme)             | <https://runner-shuqi.devlink.cn/>             | Garmin      |
+| [shugoal](https://github.com/shugoal)            | <https://shugoal.github.io/wk-shu/>             | Garmin      |
 </details>
 
 ## How it works
@@ -148,7 +152,7 @@ Clone or fork the repo.
 git clone https://github.com/yihong0618/running_page.git --depth=1
 ```
 
-## Installation and testing (node >= 16 python >= 3.8)
+## Installation and testing (node >= 20 python >= 3.11)
 
 ```bash
 pip3 install -r requirements.txt
